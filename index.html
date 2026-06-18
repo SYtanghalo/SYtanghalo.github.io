@@ -78,15 +78,10 @@
             </div>
             <nav class="hidden md:flex space-x-6">
                 <a href="#" class="text-white hover:text-sky-200 transition-colors font-medium">更多玩法</a>
-                <a href="#" class="text-white hover:text-sky-200 transition-colors font-medium">讨论大厅</a>
+                <a href="conmmunity.html" class="text-white hover:text-sky-200 transition-colors font-medium">讨论大厅</a>
                 <a href="#" class="text-white hover:text-sky-200 transition-colors font-medium">社区</a>
-                <a href="#" class="text-white hover:text-sky-200 transition-colors font-medium" id="loginBtn">登录</a>
-                <script>
-                    const loginBtn = document.getElementById('loginBtn');
-                    loginBtn.addEventListener('click', function(){
-                        window.location.href = 'login.html';
-                    })
-                </script>
+                <a href="login.html" class="text-white hover:text-sky-200 transition-colors font-medium"">登录</a>
+                
             </nav>
             <button class="md:hidden text-white text-xl">
                 <i class="fa-solid fa-bars"></i>
@@ -102,9 +97,15 @@
             <div class="glass-panel rounded-2xl p-8 shadow-xl max-w-4xl mx-auto">
                 <h2 class="text-4xl font-extrabold text-gray-800 mb-4">分享棋的无限玩法</h2>
                 <p class="text-lg text-gray-600 mb-6">在这里，每一局棋都是智慧的碰撞，每一次落子都充满惊喜。</p>
-                <button class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105 duration-300">
+                <button class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105 duration-300" id="startBtn">
                     开始对弈 <i class="fa-solid fa-play ml-2"></i>
                 </button>
+                <script>
+                    const startBtn = document.getElementById('startBtn');
+                    startBtn.addEventListener('click', function(){
+                        window.location.href = 'https://www.bilibili.com/video/BV1GJ411x7h7/?spm_id_from=333.337.search-card.all.click';
+                    })
+                </script>
             </div>
         </section>
 
