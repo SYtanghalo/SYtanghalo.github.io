@@ -27,7 +27,7 @@
             border: 1px solid #ccc;
             border-radius: 5px;
         }
-        button{
+        #loginBtn{
             width: 100%;
             padding: 10px;
             margin: 10px 0;
@@ -35,6 +35,15 @@
             border-radius: 5px;
             background-color: rgb(3, 186, 227);
             color: #fff;
+        }
+        #cancleBtn{
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: rgb(255, 255, 255);
+            color: #000000;
         }
     </style>
 </head>
@@ -56,22 +65,35 @@
                 <button type="button" id="loginBtn">登录</button>
             </div>
 
+            <script>
+                const loginBtn = document.getElementById('loginBtn');
+                loginBtn.addEventListener('click', function(){
+                    const username = document.getElementById('username').value;
+                    const password = document.getElementById('password').value;
+                    if(username === '' || password === ''){
+                            alert('用户名和密码不能为空');
+                            return;
+                    }else{
+                        alert("登录成功...即将跳转")
+                        window.location.href = 'https://www.bilibili.com/video/BV1GJ411x7h7/?spm_id_from=333.337.search-card.all.click';
+                    }
+                })
+            </script>
+
+            <div class="form-item">
+                <button type="button" id="cancleBtn">取消</button>
+            </div>
+
+            <script>
+                const cancleBtn = document.getElementById('cancleBtn');
+                cancleBtn.addEventListener('click', function(){
+                    window.location.href = 'index.html'
+                })
+            </script>
+
         </form>
     </div>
 
-    <script>
-        const loginBtn = document.getElementById('loginBtn');
-        loginBtn.addEventListener('click', function(){
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            if(username === '' || password === ''){
-                alert('用户名和密码不能为空');
-                return;
-            }else{
-                alert("登录成功...即将跳转")
-                window.location.href = 'https://www.bilibili.com/video/BV1GJ411x7h7/?spm_id_from=333.337.search-card.all.click';
-            }
-        })
-    </script>
+    
 </body>
 </html>
