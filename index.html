@@ -80,7 +80,13 @@
                 <a href="#" class="text-white hover:text-sky-200 transition-colors font-medium">更多玩法</a>
                 <a href="#" class="text-white hover:text-sky-200 transition-colors font-medium">讨论大厅</a>
                 <a href="#" class="text-white hover:text-sky-200 transition-colors font-medium">社区</a>
-                <a href="#" class="text-white hover:text-sky-200 transition-colors font-medium">登录</a>
+                <a href="#" class="text-white hover:text-sky-200 transition-colors font-medium" id="loginBtn">登录</a>
+                <script>
+                    const loginBtn = document.getElementById('loginBtn');
+                    loginBtn.addEventListener('click', function(){
+                        window.location.href = 'login.html';
+                    })
+                </script>
             </nav>
             <button class="md:hidden text-white text-xl">
                 <i class="fa-solid fa-bars"></i>
