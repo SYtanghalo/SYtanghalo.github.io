@@ -4,494 +4,344 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cmods-乐享棋异 - 社区</title>
+    <title>Cmods-乐享棋异 - 讨论大厅</title>
+    <!-- 引入 TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
-        
-        body {
-            font-family: 'Noto Sans SC', sans-serif;
-            background-color: #f8fafc;
-            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
-            background-size: 24px 24px;
+        /* 自定义动画关键帧 */
+        @keyframes slideInDown {
+            0% { opacity: 0; transform: translateY(-50px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
-        /* 玻璃拟态与卡片 */
+        /* 动画类 */
+        .animate-header { animation: slideInDown 0.8s ease-out forwards; }
+        .animate-card { opacity: 0; animation: fadeInUp 0.6s ease-out forwards; }
+
+        /* 背景与玻璃拟态 */
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
         .glass-panel {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+        .glass-header {
+            background: rgba(14, 165, 233, 0.95); /* Sky-500 with opacity */
+            backdrop-filter: blur(10px);
         }
         
-        .guide-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .guide-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-
-        /* 动画 */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-entry {
-            animation: fadeInUp 0.5s ease-out forwards;
-            opacity: 0;
-        }
-
-        /* 自定义滚动条 */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        /* 滚动条美化 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-        .tab-active {
-            color: #0ea5e9;
-            border-bottom: 2px solid #0ea5e9;
-        }
     </style>
 </head>
-<body class="text-slate-700 min-h-screen flex flex-col">
+<body class="flex flex-col">
 
-    <!-- 导航栏 -->
-    <nav class="sticky top-0 z-50 glass-panel border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('home')">
-                    <div class="bg-sky-500 text-white p-2 rounded-lg shadow-lg shadow-sky-500/30">
-                        <i class="fa-solid fa-gamepad text-xl"></i>
-                    </div>
-                    <span class="font-bold text-xl tracking-tight text-slate-800">Cmods<span class="text-sky-500">.</span>乐享棋异</span>
-                </div>
-                
-                <div class="hidden md:flex items-center space-x-8">
-                    <button id="return_to_cmods" class="nav-item text-slate-500 hover:text-sky-600 font-medium h-16 flex items-center transition">返回Cmods</button>
-                    <button onclick="switchTab('home')" id="nav-home" class="nav-item text-sky-600 font-medium border-b-2 border-sky-500 h-16 flex items-center transition">社区首页</button>
-                    <button onclick="switchTab('guides')" id="nav-guides" class="nav-item text-slate-500 hover:text-sky-600 font-medium h-16 flex items-center transition">攻略库</button>
-                    <button onclick="switchTab('community')" id="nav-community" class="nav-item text-slate-500 hover:text-sky-600 font-medium h-16 flex items-center transition">社区广场</button>
-                    
-                    <script>
-                        const cancleBtn = document.getElementById('return_to_cmods');
-                        cancleBtn.addEventListener('click', function(){
-                            window.location.href = 'index.html'
-                        })
-                    </script>
-
-                </div>
-
-                <div class="flex items-center gap-4">
-                    <div class="relative hidden sm:block">
-                        <input type="text" id="global-search" placeholder="搜索攻略或话题..." class="pl-9 pr-4 py-1.5 bg-slate-100 border-none rounded-full text-sm focus:ring-2 focus:ring-sky-500 focus:bg-white transition-all w-48 focus:w-64 outline-none">
-                        <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                    </div>
-                    <img src="https://picsum.photos/seed/avatar_user/100/100" alt="用户头像" class="w-9 h-9 rounded-full border-2 border-white shadow-sm cursor-pointer hover:scale-105 transition">
-                </div>
+    <!-- 头部导航 -->
+    <header id="main-header" class="w-full glass-header shadow-lg z-50 relative animate-header text-white">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="window.location.reload()">
+                <i class="fa-solid fa-gamepad text-3xl"></i>
+                <h1 class="text-2xl font-bold tracking-wide">Cmods-乐享棋异</h1>
             </div>
+            <nav class="hidden md:flex space-x-8 font-medium">
+                <a href="index.html" class="hover:text-sky-200 transition-colors">首页</a>
+                <a href="#" class="text-sky-100 border-b-2 border-white pb-1">讨论大厅</a>
+                <a href="https://game.hullqin.cn/" class="hover:text-sky-200 transition-colors">桌游合集</a>
+                <a href="community.html" class="hover:text-sky-200 transition-colors">社区</a>
+                <a href="login.html" class="hover:text-sky-200 transition-colors">登录</a>
+            </nav>
         </div>
-    </nav>
+    </header>
 
-    <!-- 主内容区 -->
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <!-- 主内容区域 -->
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-5xl">
         
-        <!-- 首页视图 (Hero + 推荐) -->
-        <section id="view-home" class="space-y-8 animate-entry">
-            <div class="relative rounded-3xl overflow-hidden bg-slate-900 h-[400px] shadow-2xl">
-                <img src="https://picsum.photos/seed/chess_hero/1200/400" alt="棋盘背景图" class="absolute inset-0 w-full h-full object-cover opacity-60">
-                <div class="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/80 to-transparent flex items-center">
-                    <div class="px-8 md:px-16 max-w-2xl">
-                        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">探索棋的<br/><span class="text-sky-400">无限可能</span></h1>
-                        <p class="text-slate-300 mb-8 text-lg">汇聚全球顶尖棋手，提供最全的开局理论与残局精解。</p>
-                        <button onclick="switchTab('guides')" class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-8 rounded-full shadow-lg shadow-sky-500/30 transform transition hover:scale-105">
-                            浏览攻略 <i class="fa-solid fa-arrow-right ml-2"></i>
+        <!-- 发布帖子区域 -->
+        <section class="mb-8 animate-card" style="animation-delay: 0.1s;">
+            <div class="glass-panel rounded-2xl p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fa-solid fa-pen-to-square mr-2 text-sky-500"></i> 发布新话题
+                </h2>
+                <form id="post-form" class="space-y-4">
+                    <div>
+                        <input type="text" id="post-title" placeholder="请输入标题..." 
+                            class="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-sky-500 focus:ring-2 focus:ring-sky-200 outline-none transition-all"
+                            required>
+                    </div>
+                    <div>
+                        <textarea id="post-content" rows="3" placeholder="分享你的棋局心得、疑问或趣事..." 
+                            class="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-sky-500 focus:ring-2 focus:ring-sky-200 outline-none transition-all resize-none"
+                            required></textarea>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div class="flex space-x-2 text-gray-500">
+                            <button type="button" class="hover:text-sky-500 transition"><i class="fa-solid fa-image"></i></button>
+                            <button type="button" class="hover:text-sky-500 transition"><i class="fa-solid fa-link"></i></button>
+                        </div>
+                        <button type="submit" class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transform transition hover:scale-105 active:scale-95">
+                            发布帖子
                         </button>
                     </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="glass-panel p-6 rounded-2xl flex items-center gap-4 hover:bg-white transition cursor-pointer" onclick="switchTab('guides')">
-                    <div class="bg-blue-100 p-4 rounded-full text-blue-600"><i class="fa-solid fa-book-open text-xl"></div>
-                    <div>
-                        <h3 class="font-bold text-slate-800">海量攻略</h3>
-                        <p class="text-sm text-slate-500">从入门到精通</p>
-                    </div>
-                </div>
-                <div class="glass-panel p-6 rounded-2xl flex items-center gap-4 hover:bg-white transition cursor-pointer" onclick="switchTab('community')">
-                    <div class="bg-green-100 p-4 rounded-full text-green-600"><i class="fa-solid fa-users text-xl"></i></div>
-                    <div>
-                        <h3 class="font-bold text-slate-800">活跃社区</h3>
-                        <p class="text-sm text-slate-500">与高手过招</p>
-                    </div>
-                </div>
-                <div class="glass-panel p-6 rounded-2xl flex items-center gap-4 hover:bg-white transition cursor-pointer">
-                    <div class="bg-purple-100 p-4 rounded-full text-purple-600"><i class="fa-solid fa-trophy text-xl"></i></div>
-                    <div>
-                        <h3 class="font-bold text-slate-800">赛事中心</h3>
-                        <p class="text-sm text-slate-500">赢取丰厚奖励</p>
-                    </div>
-                </div>
+                </form>
             </div>
         </section>
 
-        <!-- 攻略库视图 -->
-        <section id="view-guides" class="hidden space-y-6">
-            <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-4 mb-6 animate-entry">
-                <div>
-                    <h2 class="text-3xl font-bold text-slate-800">攻略知识库</h2>
-                    <p class="text-slate-500 mt-1">系统化学习，提升你的棋力等级</p>
-                </div>
-                <div class="flex gap-2 bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
-                    <button onclick="filterGuides('all')" class="guide-filter active px-4 py-1.5 rounded-md text-sm font-medium transition bg-slate-800 text-white" data-filter="all">全部
-                    <button onclick="filterGuides('beginner')" class="guide-filter px-4 py-1.5 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-100 transition" data-filter="beginner">新手入门</button>
-                    <button onclick="filterGuides('advanced')" class="guide-filter px-4 py-1.5 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-100 transition" data-filter="advanced">进阶技巧</button>
-                    <button onclick="filterGuides('endgame')" class="guide-filter px-4 py-1.5 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-100 transition" data-filter="endgame">残局精解</button>
-                </div>
+        <!-- 筛选与搜索 -->
+        <section class="mb-6 flex flex-col md:flex-row justify-between items-center gap-4 animate-card" style="animation-delay: 0.2s;">
+            <div class="flex space-x-2 overflow-x-auto pb-2 md:pb-0 w-full md:w-auto">
+                <button class="filter-btn active px-4 py-1.5 rounded-full bg-sky-500 text-white text-sm font-medium transition shadow-sm" data-filter="all">全部</button>
+                <button class="filter-btn px-4 py-1.5 rounded-full bg-white text-gray-600 hover:bg-gray-100 text-sm font-medium transition shadow-sm" data-filter="strategy">策略心得</button>
+                <button class="filter-btn px-4 py-1.5 rounded-full bg-white text-gray-600 hover:bg-gray-100 text-sm font-medium transition shadow-sm" data-filter="question">求助提问</button>
+                <button class="filter-btn px-4 py-1.5 rounded-full bg-white text-gray-600 hover:bg-gray-100 text-sm font-medium transition shadow-sm" data-filter="chat">闲聊交流</button>
             </div>
-
-            <div id="guides-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- 攻略卡片由 JS 渲染 -->
-            
-        </section>
-
-        <!-- 社区视图 -->
-        <section id="view-community" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- 左侧：帖子列表 -->
-            <div class="lg:col-span-8 space-y-4">
-                <div class="flex items-center justify-between mb-2 animate-entry">
-                    <div class="flex gap-2">
-                        <button class="px-4 py-1.5 rounded-full bg-slate-800 text-white text-xs font-medium shadow-md">最新</button>
-                        <button class="px-4 py-1.5 rounded-full bg-white text-slate-600 border border-slate-200 text-xs font-medium hover:bg-slate-50">最热</button>
-                    </div>
-                    <button onclick="openPostModal()" class="text-sky-600 text-sm font-medium hover:underline"><i class="fa-solid fa-pen-nib mr-1"></i> 发布话题</button>
-                </div>
-                <div id="post-list" class="space-y-4">
-                    <!-- 帖子由 JS 渲染 -->
-                </div>
-            </div>
-
-            <!-- 右侧：侧边栏 -->
-            <div class="lg:col-span-4 space-y-6 animate-entry" style="animation-delay: 0.2s;">
-                <div class="glass-panel rounded-2xl p-5">
-                    <h4 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-fire text-orange-500"></i> 热门话题
-                    </h4>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs rounded-full cursor-pointer hover:bg-sky-100 hover:text-sky-600">#开局理论</span>
-                        <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs rounded-full cursor-pointer hover:bg-sky-100 hover:text-sky-600">#软件辅助</span>
-                        <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs rounded-full cursor-pointer hover:bg-sky-100 hover:text-sky-600">#比赛直播</span>
-                    </div>
-                </div>
-                <div class="glass-panel rounded-2xl p-5">
-                    <h4 class="font-bold text-slate-800 mb-4">本周大神</h4>
-                    <ul class="space-y-4" id="leaderboard">
-                        <!-- JS 生成 -->
-                    </ul>
-                </div>
+            <div class="relative w-full md:w-64">
+                <input type="text" id="search-input" placeholder="搜索帖子..." 
+                    class="w-full pl-10 pr-4 py-2 rounded-full bg-white border border-gray-200 focus:border-sky-500 focus:ring-2 focus:ring-sky-200 outline-none transition-all text-sm">
+                <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
             </div>
         </section>
+
+        <!-- 帖子列表 -->
+        <section id="posts-container" class="space-y-4">
+            <!-- 帖子将通过 JS 动态插入这里 -->
+        </section>
+
+        <!-- 空状态提示 (默认隐藏) -->
+        <div id="empty-state" class="hidden text-center py-12 animate-card">
+            <i class="fa-regular fa-folder-open text-6xl text-gray-300 mb-4"></i>
+            <p class="text-gray-500">暂无相关帖子，快来发布第一条吧！</p>
+        </div>
 
     </main>
 
     <!-- 页脚 -->
-    <footer class="bg-white border-t border-slate-200 py-8 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="text-slate-500 text-sm">&copy; 2026 Cmods-乐享棋异. All rights reserved.</p>
-        </div>
+    <footer class="mt-auto py-6 text-center text-gray-500 text-sm animate-card" style="animation-delay: 0.3s;">
+        <p>&copy; 2026 Cmods-乐享棋异. All rights reserved.</p>
     </footer>
 
-    <!-- 发帖模态框 -->
-    <div id="post-modal" class="fixed inset-0 z-[100] hidden">
-        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closePostModal()"></div>
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-white rounded-2xl shadow-2xl p-6 transform transition-all scale-95 opacity-0" id="modal-content">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-slate-800">发布新话题</h3>
-                <button onclick="closePostModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-            <form id="new-post-form" class="space-y-4">
-                <input type="text" id="modal-title" placeholder="标题..." class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none" required>
-                <textarea id="modal-text" rows="4" placeholder="内容..." class="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500 outline-none resize-none" required></textarea>
-                <div class="flex justify-end gap-3">
-                    <button type="button" onclick="closePostModal()" class="px-4 py-2 text-slate-500 hover:bg-slate-100 rounded-lg">取消</button>
-                    <button type="submit" class="px-6 py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-lg shadow-lg shadow-sky-500/30">发布</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
+    <!-- JavaScript 逻辑 -->
     <script>
-        // --- 数据定义 ---
-        const guidesData = [
+        // 模拟初始数据
+        const initialPosts = [
             {
                 id: 1,
-                title: "新手必看：三步掌握中炮开局",
-                desc: "中炮开局是进攻性最强的布局之一，本文详解其核心思路与常见陷阱。",
-                category: "beginner",
-                image: "https://picsum.photos/seed/guide1/400/250",
-                author: "棋王老王",
-                views: 1205,
-                likes: 342
+                title: "新手求问：开局第一步走哪里优势最大？",
+                content: "最近刚开始玩，感觉开局很迷茫，有没有大佬分享一下通用开局思路？",
+                author: "ChessNewbie",
+                avatar: "https://picsum.photos/seed/user1/100/100",
+                category: "question",
+                likes: 12,
+                comments: 5,
+                time: "2小时前",
+                isLiked: false
             },
             {
                 id: 2,
-                title: "屏风马防御体系深度解析",
-                desc: "面对中炮，屏风马是最稳健的应对。学习如何构建铜墙铁壁般的防御。",
-                category: "advanced",
-                image: "https://picsum.photos/seed/guide2/400/250",
-                author: "防御大师",
-                views: 890,
-                likes: 210
-            },
-            {
-                id: 3,
-                title: "单车难破士象全？那是你没看这篇",
-                desc: "经典残局破解教程，教你如何利用帅力助攻，实现巧胜。",
-                category: "endgame",
-                image: "https://picsum.photos/seed/guide3/400/250",
-                author: "残局圣手",
-                views: 2300,
-                likes: 567
-            },
-            {
-                id: 4,
-                title: "飞相局：以柔克刚的艺术",
-                desc: "适合喜欢控制局面的玩家，通过灵活的子力调动寻找对手破绽。",
-                category: "advanced",
-                image: "https://picsum.photos/seed/guide4/400/250",
-                author: "太极棋手",
-                views: 650,
-                likes: 120
-            },
-            {
-                id: 5,
-                title: "马兵必胜单缺象实战演示",
-                desc: "基础必胜残局之一，掌握定式即可在实战中轻松拿分。",
-                category: "endgame",
-                image: "https://picsum.photos/seed/guide5/400/250",
-                author: "基础教练",
-                views: 1500,
-                likes: 400
-            },
-            {
-                id: 6,
-                title: "象棋术语大全：什么是‘天地炮’？",
-                desc: "扫盲贴，带你快速读懂棋谱和高手解说中的专业术语。",
-                category: "beginner",
-                image: "https://picsum.photos/seed/guide6/400/250",
-                author: "百科君",
-                views: 3100,
-                likes: 890
+                title: "分享一个我昨天发现的绝妙残局解法",
+                content: "这个残局困扰了我很久，最后发现只要动一下马的位置就豁然开朗了，附图解。",
+                author: "GrandMaster_X",
+                avatar: "https://picsum.photos/seed/user2/100/100",
+                category: "strategy",
+                likes: 45,
+                comments: 18,
+                time: "5小时前",
+                isLiked: true
             }
         ];
 
-        let postsData = [
-            { id: 101, author: "MasterChess", avatar: "https://picsum.photos/seed/u1/100/100", title: "关于最近版本更新后AI难度的调整讨论", content: "感觉更新后残局阶段的AI计算深度明显增加了...", category: "赛事", likes: 128, comments: 45, time: "10分钟前", isLiked: false },
-            { id: 102, author: "NovicePlayer", avatar: "https://picsum.photos/seed/u2/100/100", title: "萌新求教：这个开局叫什么名字？", content: "如图，红方第一步走炮二平五，黑方跳马...", category: "求助", likes: 12, comments: 8, time: "35分钟前", isLiked: true }
-        ];
+        // 状态管理
+        let posts = JSON.parse(localStorage.getItem('cmods_posts')) || initialPosts;
+        let currentFilter = 'all';
+        let searchQuery = '';
 
-        const leaders = [
-            { name: "AlphaGo_Pro", score: 3200, avatar: "https://picsum.photos/seed/l1/100/100" },
-            { name: "DeepBlue_X", score: 3150, avatar: "https://picsum.photos/seed/l2/100/100" },
-            { name: "ChessMaster", score: 3080, avatar: "https://picsum.photos/seed/l3/100/100" }
-        ];
+        // DOM 元素
+        const postsContainer = document.getElementById('posts-container');
+        const postForm = document.getElementById('post-form');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const searchInput = document.getElementById('search-input');
+        const emptyState = document.getElementById('empty-state');
 
-        // --- 核心逻辑 ---
-        
-        // 切换视图
-        window.switchTab = function(tabName) {
-            // 隐藏所有视图
-            ['home', 'guides', 'community'].forEach(t => {
-                document.getElementById(`view-${t}`).classList.add('hidden');
-                const navBtn = document.getElementById(`nav-${t}`);
-                if(navBtn) {
-                    navBtn.classList.remove('text-sky-600', 'border-b-2', 'border-sky-500');
-                    navBtn.classList.add('text-slate-500');
-                }
-            });
-
-            // 显示目标视图
-            document.getElementById(`view-${tabName}`).classList.remove('hidden');
-            document.getElementById(`view-${tabName}`).classList.add('animate-entry');
+        // 初始化渲染
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPosts();
             
-            // 激活导航样式
-            const activeNav = document.getElementById(`nav-${tabName}`);
-            if(activeNav) {
-                activeNav.classList.remove('text-slate-500');
-                activeNav.classList.add('text-sky-600', 'border-b-2', 'border-sky-500');
-            }
-
-            // 重新触发动画
-            const entries = document.querySelectorAll(`#view-${tabName} .animate-entry`);
-            entries.forEach(el => {
-                el.style.animation = 'none';
-                el.offsetHeight; /* trigger reflow */
-                el.style.animation = null; 
+            // 触发入场动画
+            const cards = document.querySelectorAll('.animate-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${0.1 + index * 0.1}s`;
             });
-        };
+        });
 
-        // 渲染攻略
-        function renderGuides(filter = 'all') {
-            const container = document.getElementById('guides-grid');
-            const filtered = filter === 'all' ? guidesData : guidesData.filter(g => g.category === filter);
-            
-            container.innerHTML = filtered.map((g, i) => `
-                <div class="guide-card glass-panel rounded-2xl overflow-hidden group cursor-pointer animate-entry" style="animation-delay: ${i * 0.1}s">
-                    <div class="h-48 overflow-hidden relative">
-                        <img src="${g.image}" alt="${g.title}封面图" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                        <div class="absolute top-3 right-3 bg-black/50 backdrop-blur-sm text-white text-xs px-2 py-1 rounded">
-                            <i class="fa-regular fa-eye mr-1"> ${g.views}
-                        </div>
-                    </div>
-                    <div class="p-5">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="text-xs font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded uppercase">${getCategoryName(g.category)}</span>
-                        </div>
-                        <h3 class="font-bold text-lg text-slate-800 mb-2 line-clamp-1 group-hover:text-sky-600 transition">${g.title}</h3>
-                        <p class="text-slate-500 text-sm line-clamp-2 mb-4">${g.desc}</p>
-                        <div class="flex items-center justify-between text-xs text-slate-400 border-t border-slate-100 pt-3">
-                            <div class="flex items-center gap-2">
-                                <div class="w-5 h-5 rounded-full bg-slate-200 overflow-hidden">
-                                     <img src="https://picsum.photos/seed/${g.author}/50/50" alt="作者头像" class="w-full h-full">
-                                </div>
-                                <span>${g.author}</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span><i class="fa-regular fa-heart mr-1"></i>${g.likes}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function getCategoryName(cat) {
-            const map = { 'beginner': '新手', 'advanced': '进阶', 'endgame': '残局' };
-            return map[cat] || '综合';
-        }
-
-        window.filterGuides = function(category) {
-            // 更新按钮状态
-            document.querySelectorAll('.guide-filter').forEach(btn => {
-                if(btn.dataset.filter === category) {
-                    btn.classList.add('bg-slate-800', 'text-white');
-                    btn.classList.remove('text-slate-600', 'hover:bg-slate-100');
-                } else {
-                    btn.classList.remove('bg-slate-800', 'text-white');
-                    btn.classList.add('text-slate-600', 'hover:bg-slate-100');
-                }
-            });
-            renderGuides(category);
-        };
-
-        // 渲染社区帖子
+        // 渲染帖子列表
         function renderPosts() {
-            const container = document.getElementById('post-list');
-            container.innerHTML = postsData.map(p => `
-                <article class="glass-panel rounded-2xl p-5 hover:shadow-md transition animate-entry">
-                    <div class="flex gap-4">
-                        <img src="${p.avatar}" alt="${p.author}头像" class="w-10 h-10 rounded-full border border-slate-100">
-                        <div class="flex-grow">
-                            <div class="flex justify-between items-start">
-                                <h3 class="font-bold text-slate-800 hover:text-sky-600 cursor-pointer">${p.title}</h3>
-                                <span class="text-xs text-slate-400">${p.time}</span>
-                            </div>
-                            <p class="text-slate-600 text-sm mt-1 line-clamp-2">${p.content}</p>
-                            <div class="flex items-center gap-6 mt-3 text-slate-400 text-sm">
-                                <button onclick="toggleLike(${p.id})" class="hover:text-red-500 transition flex items-center gap-1 ${p.isLiked ? 'text-red-500' : ''}">
-                                    <i class="${p.isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i> ${p.likes}
-                                </button>
-                                <button class="hover:text-sky-500 transition flex items-center gap-1">
-                                    <i class="fa-regular fa-comment"></i> ${p.comments}
-                                </button>
+            postsContainer.innerHTML = '';
+            
+            const filteredPosts = posts.filter(post => {
+                const matchesFilter = currentFilter === 'all' || post.category === currentFilter;
+                const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                      post.content.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesFilter && matchesSearch;
+            });
+
+            if (filteredPosts.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                filteredPosts.forEach((post, index) => {
+                    const postEl = createPostElement(post, index);
+                    postsContainer.appendChild(postEl);
+                });
+            }
+        }
+
+        // 创建单个帖子 HTML 元素
+        function createPostElement(post, index) {
+            const div = document.createElement('div');
+            div.className = 'glass-panel rounded-xl p-5 hover:shadow-lg transition-all duration-300 animate-card border-l-4 border-transparent hover:border-sky-500';
+            div.style.animationDelay = `${index * 0.05}s`;
+            
+            const categoryLabels = {
+                'strategy': '<span class="bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded-full">策略</span>',
+                'question': '<span class="bg-orange-100 text-orange-600 text-xs px-2 py-1 rounded-full">求助</span>',
+                'chat': '<span class="bg-green-100 text-green-600 text-xs px-2 py-1 rounded-full">闲聊</span>'
+            };
+
+            div.innerHTML = `
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center space-x-3">
+                        <img src="${post.avatar}" alt="用户头像" class="w-10 h-10 rounded-full object-cover border border-gray-200">
+                        <div>
+                            <h3 class="font-bold text-gray-800 text-lg leading-tight hover:text-sky-600 cursor-pointer transition">${post.title}</h3>
+                            <div class="flex items-center space-x-2 mt-1">
+                                <span class="text-xs text-gray-500">${post.author}</span>
+                                <span class="text-xs text-gray-400">•</span>
+                                <span class="text-xs text-gray-500">${post.time}</span>
+                                ${categoryLabels[post.category] || ''}
                             </div>
                         </div>
                     </div>
-                </article>
-            `).join('');
-        }
-
-        window.toggleLike = function(id) {
-            const post = postsData.find(p => p.id === id);
-            if(post) {
-                post.isLiked = !post.isLiked;
-                post.likes += post.isLiked ? 1 : -1;
-                renderPosts();
-            }
-        };
-
-        // 渲染排行榜
-        function renderLeaderboard() {
-            document.getElementById('leaderboard').innerHTML = leaders.map((u, i) => `
-                <li class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <span class="font-bold ${i===0?'text-yellow-500':i===1?'text-slate-400':'text-orange-400'} w-4">${i+1}</span>
-                        <img src="${u.avatar}" alt="${u.name}头像" class="w-8 h-8 rounded-full">
-                        <span class="text-sm font-medium text-slate-700">${u.name}</span>
+                    <button class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-ellipsis"></i></button>
+                </div>
+                <p class="text-gray-600 text-sm mb-4 line-clamp-2">${post.content}</p>
+                <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+                    <div class="flex space-x-6">
+                        <button onclick="toggleLike(${post.id})" class="flex items-center space-x-1 text-sm ${post.isLiked ? 'text-red-500' : 'text-gray-500'} hover:text-red-500 transition group">
+                            <i class="${post.isLiked ? 'fa-solid' : 'fa-regular'} fa-heart group-active:scale-125 transition-transform"></i>
+                            <span>${post.likes}</span>
+                        </button>
+                        <button class="flex items-center space-x-1 text-sm text-gray-500 hover:text-sky-500 transition">
+                            <i class="fa-regular fa-comment"></i>
+                            <span>${post.comments}</span>
+                        </button>
+                        <button class="flex items-center space-x-1 text-sm text-gray-500 hover:text-sky-500 transition">
+                            <i class="fa-solid fa-share-nodes"></i>
+                            <span>分享</span>
+                        </button>
                     </div>
-                    <span class="text-xs font-bold text-sky-500 bg-sky-50 px-2 py-0.5 rounded">${u.score}</span>
-                </li>
-            `).join('');
+                    <button onclick="deletePost(${post.id})" class="text-xs text-gray-400 hover:text-red-500 transition">删除</button>
+                </div>
+            `;
+            return div;
         }
 
-        // 模态框逻辑
-        window.openPostModal = function() {
-            const modal = document.getElementById('post-modal');
-            const content = document.getElementById('modal-content');
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                content.classList.remove('scale-95', 'opacity-0');
-                content.classList.add('scale-100', 'opacity-100');
-            }, 10);
-        };
-
-        window.closePostModal = function() {
-            const modal = document.getElementById('post-modal');
-            const content = document.getElementById('modal-content');
-            content.classList.remove('scale-100', 'opacity-100');
-            content.classList.add('scale-95', 'opacity-0');
-            setTimeout(() => modal.classList.add('hidden'), 300);
-        };
-
-        document.getElementById('new-post-form').addEventListener('submit', (e) => {
+        // 发布新帖子
+        postForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const title = document.getElementById('modal-title').value;
-            const text = document.getElementById('modal-text').value;
-            postsData.unshift({
+            const title = document.getElementById('post-title').value;
+            const content = document.getElementById('post-content').value;
+            
+            if (!title.trim() || !content.trim()) return;
+
+            const newPost = {
                 id: Date.now(),
-                author: "我",
-                avatar: "https://picsum.photos/seed/avatar_user/100/100",
                 title: title,
-                content: text,
-                category: "闲聊",
+                content: content,
+                author: "我",
+                avatar: "https://picsum.photos/seed/me/100/100",
+                category: "chat", // 默认分类，可扩展选择器
                 likes: 0,
                 comments: 0,
                 time: "刚刚",
                 isLiked: false
-            });
+            };
+
+            posts.unshift(newPost);
+            savePosts();
             renderPosts();
-            closePostModal();
-            e.target.reset();
+            postForm.reset();
+            
+            // 简单的成功提示动画
+            const btn = postForm.querySelector('button[type="submit"]');
+            const originalText = btn.innerText;
+            btn.innerText = "发布成功!";
+            btn.classList.add('bg-green-500');
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.classList.remove('bg-green-500');
+            }, 2000);
         });
 
-        // 初始化
-        document.addEventListener('DOMContentLoaded', () => {
-            renderGuides();
-            renderPosts();
-            renderLeaderboard();
-            
-            // 全局搜索简单模拟
-            document.getElementById('global-search').addEventListener('input', (e) => {
-                const val = e.target.value.toLowerCase();
-                if(document.getElementById('view-guides').classList.contains('hidden') === false) {
-                    const filtered = guidesData.filter(g => g.title.toLowerCase().includes(val));
-                    // 这里简化处理，实际应复用 renderGuides 逻辑并传入过滤后的数据
-                    // 为保持代码简洁，此处仅做示意
-                }
+        // 点赞功能
+        window.toggleLike = function(id) {
+            const post = posts.find(p => p.id === id);
+            if (post) {
+                post.isLiked = !post.isLiked;
+                post.likes += post.isLiked ? 1 : -1;
+                savePosts();
+                renderPosts();
+            }
+        };
+
+        // 删除功能
+        window.deletePost = function(id) {
+            if(confirm('确定要删除这条帖子吗？')) {
+                posts = posts.filter(p => p.id !== id);
+                savePosts();
+                renderPosts();
+            }
+        };
+
+        // 筛选功能
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 更新按钮样式
+                filterBtns.forEach(b => {
+                    b.classList.remove('bg-sky-500', 'text-white');
+                    b.classList.add('bg-white', 'text-gray-600');
+                });
+                btn.classList.remove('bg-white', 'text-gray-600');
+                btn.classList.add('bg-sky-500', 'text-white');
+                
+                // 更新状态并渲染
+                currentFilter = btn.dataset.filter;
+                renderPosts();
             });
         });
+
+        // 搜索功能
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderPosts();
+        });
+
+        // 持久化存储
+        function savePosts() {
+            localStorage.setItem('cmods_posts', JSON.stringify(posts));
+        }
     </script>
 </body>
 </html>
